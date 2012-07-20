@@ -14,7 +14,7 @@ class Connection ():
     def __init__(self):
         try:
            self.conn = MySQLdb.connect(host="localhost", user="root",
-                                 passwd="ONGOINGwarfare1+2+3+", db="CRUDQT")
+                                 passwd="somepass123123", db="CRUDQT")
         except MySQLdb.Error, e:
            print "Error %d: %s" % (e.args[0], e.args[1])
            sys.exit(1)
