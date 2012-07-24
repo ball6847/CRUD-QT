@@ -23,27 +23,21 @@ class Retrieve (qt.QWidget):
         self.initUI()
 
     def initUI(self):
-        self.searchEdit = qt.QLineEdit()
-        self.searchEdit.setObjectName ("search")
-        
+        self.searchByFirstnameEdit = qt.QLineEdit()
+        self.searchByUsernameEdit = qt.QLineEdit()
         self.resultLabel = qt.QLabel()
-        self.resultLabel.setObjectName ("fromTableLabel")
         self.fromTableLabel = qt.QLabel()
-        self.fromTableLabel.setObjectName ("fromTableLabel")
         self.fromTableLabel.setText("From table:")
 
-                #BUTTONS
-        self.searchButton = qt.QPushButton(self)
-        self.searchButton.setObjectName("search")
-        self.searchButton.setText("Search")
+        self.searchByFirstnameButton = qt.QPushButton(self)
+        self.searchByFirstnameButton.setText("by First Name")
+        self.searchByUsernameButton = qt.QPushButton(self)
+        self.searchByUsernameButton.setText("by Username")
         
         self.close = qt.QPushButton(self)
-        self.close.setObjectName("close")
         self.close.setText("Close")
         
-                #COMBO BOX
         self.tablesCombo = qt.QComboBox(self)
-        self.tablesCombo.setObjectName ("tablesCombo")
         try:
             myCursor.execute ("SHOW TABLES")
             tablesResult = myCursor.fetchall()
@@ -52,45 +46,88 @@ class Retrieve (qt.QWidget):
         except mdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
             sys.exit(1) 
-        
-                #LAYOUT
+
+#        self.spacer = qt.QSpacerItem(100, 50, qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
+                
         grid = qt.QGridLayout()
         grid.setSpacing(10)
                 
-                #ADDING THE WIDGETS TO THE LAYOUT
-        grid.addWidget(self.searchEdit, 1, 0)
-        grid.addWidget(self.searchButton, 1, 1)
+        grid.addWidget(self.searchByFirstnameEdit, 1, 0)
+        grid.addWidget(self.searchByFirstnameButton, 1, 1)
         grid.addWidget(self.fromTableLabel, 2, 0,)
         grid.addWidget(self.tablesCombo, 2, 1)
+        grid.addWidget(self.searchByUsernameEdit, 3, 0)
+        grid.addWidget(self.searchByUsernameButton, 3, 1)
         grid.addWidget(self.resultLabel, 4, 0, 1, 2)
         grid.addWidget(self.close, 5, 0, 1, 2)
         
-                #SETTING THE LAYOUT TO THE OBJECT
         self.setLayout(grid)
-        self.connect(self.searchButton, SIGNAL("clicked()"), self.submitQuery)
+        self.connect(self.searchByFirstnameButton, SIGNAL("clicked()"), self.byFirstnameQuery)
+        self.connect(self.searchByUsernameButton, SIGNAL("clicked()"), self.byUsernameQuery)
         self.connect(self.close, SIGNAL("clicked()"), self.quitApp)
         
-    def submitQuery (self):
-        if self.searchEdit.text() != '' and self.tablesCombo.currentText() == 'User':
+    def byFirstnameQuery (self):
+        if self.searchByFirstnameEdit.text() != '' and self.tablesCombo.currentText() == 'User':
             try:
-                myCursor.execute ("SELECT * FROM User WHERE User_Fname = %s", [self.searchEdit.text()])
+                myCursor.execute ("SELECT User_Username FROM User WHERE User_Fname = %s", [self.searchByFirstnameEdit.text()])
                 searchResult = myCursor.fetchall()
-                for row in searchResult:
-                        self.resultLabel.setText(self.searchEdit.text() + " has the username: " + row[3])
+                if searchResult == None:
+                    alertPopup = qt.QMessageBox()
+                    alertPopup.setText("Nothing about " + self.searchByFirstnameEdit.text() + " was found in this table")
+                    alertPopup.setIcon(alertPopup.Critical)
+                    alertPopup.exec_()
+                else:
+                    for row in searchResult:
+                            self.resultLabel.setText(self.searchByFirstnameEdit.text() + " has the username: " + row[0])
             except mdb.Error, e:
                 print "Error %d: %s" % (e.args[0], e.args[1])
                 sys.exit(1)
-        elif self.searchEdit.text() != '' and self.tablesCombo.currentText() == 'Tasks':
+        elif self.searchByFirstnameEdit.text() != '' and self.tablesCombo.currentText() == 'Tasks':
             try:
-                myCursor.execute ("SELECT * FROM Tasks WHERE User_ID = (SELECT User_ID FROM User WHERE User_Fname = %s)", self.searchEdit.text())
+                myCursor.execute ("SELECT Task_Subject FROM Tasks WHERE User_ID = (SELECT User_ID FROM User WHERE User_Fname = %s)", self.searchByFirstnameEdit.text())
                 searchResult = myCursor.fetchall()
                 for row in searchResult:
-                        self.resultLabel.setText(self.searchEdit.text() + " has to: " + row[5])
+                    if row[0] == '': self.resultLabel.setText("Nothing about " + self.searchByFirstnameEdit.text() + " was found in this table")
+                    else: self.resultLabel.setText(self.searchByFirstnameEdit.text() + " has to: " + row[0])
             except mdb.Error, e:
                 print "Error %d: %s" % (e.args[0], e.args[1])
                 sys.exit(1)
         else:
             alertPopup = qt.QMessageBox()
+            alertPopup.setWindowTitle ("Warning!")
+            alertPopup.setText("Search field is empty!")
+            alertPopup.setIcon(alertPopup.Critical)
+            alertPopup.exec_()
+            
+    def byUsernameQuery (self):
+        if self.searchByUsernameEdit.text() != '' and self.tablesCombo.currentText() == 'User':
+            try:
+                myCursor.execute ("SELECT User_Fname FROM User WHERE User_Username = %s", [self.searchByUsernameEdit.text()])
+                searchResult = myCursor.fetchall()
+                if searchResult == None:
+                    alertPopup = qt.QMessageBox()
+                    alertPopup.setText("Nothing about " + self.searchByUsernameEdit.text() + " was found in this table")
+                    alertPopup.setIcon(alertPopup.Critical)
+                    alertPopup.exec_()
+                else:
+                    for row in searchResult:
+                            self.resultLabel.setText(self.searchByUsernameEdit.text() + " has the username: " + row[0])
+            except mdb.Error, e:
+                print "Error %d: %s" % (e.args[0], e.args[1])
+                sys.exit(1)
+        elif self.searchByUsernameEdit.text() != '' and self.tablesCombo.currentText() == 'Tasks':
+            try:
+                myCursor.execute ("SELECT Task_Subject FROM Tasks WHERE User_ID = (SELECT User_ID FROM User WHERE User_Username = %s)", self.searchByUsernameEdit.text())
+                searchResult = myCursor.fetchall()
+                for row in searchResult:
+                    if row[0] == '': self.resultLabel.setText("Nothing about " + self.searchByUsernameEdit.text() + " was found in this table")
+                    else: self.resultLabel.setText(self.searchByUsernameEdit.text() + " has to: " + row[0])
+            except mdb.Error, e:
+                print "Error %d: %s" % (e.args[0], e.args[1])
+                sys.exit(1)
+        else:
+            alertPopup = qt.QMessageBox()
+            alertPopup.setWindowTitle ("Warning!")
             alertPopup.setText("Search field is empty!")
             alertPopup.setIcon(alertPopup.Critical)
             alertPopup.exec_()

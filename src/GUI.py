@@ -5,7 +5,8 @@ Created on Jul 18, 2012
 '''
 
 import sys
-import CreateWidget
+import CreateUserWidget
+import CreateTaskWidget
 import RetrieveWidget
 from PyQt4 import QtGui as qt
 
@@ -15,14 +16,16 @@ def main():
     '''
     app = qt.QApplication(sys.argv)
 
-    CreateTab = CreateWidget.Create()
+    CreateUserTab = CreateUserWidget.Create()
+    CreateTaskTab = CreateTaskWidget.Create()
     RetrieveTab = RetrieveWidget.Retrieve()
     
     tabs = qt.QTabWidget()
-    tabs.addTab (CreateTab, "Create User")
+    tabs.addTab (CreateUserTab, "Create User")
+    tabs.addTab (CreateTaskTab, "Create Task")
     tabs.addTab (RetrieveTab, "Search")
     
-    tabs.setGeometry(300, 300, 300, 300)
+    tabs.setGeometry(450, 100, 350, 520)
     tabs.setWindowTitle('CRUD')
     tabs.show()
     
