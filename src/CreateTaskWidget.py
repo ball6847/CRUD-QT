@@ -28,7 +28,7 @@ class Create (qt.QWidget):
         self.userLabel = qt.QLabel('For user: ')
         self.usersCombo = qt.QComboBox(self)
         try:
-            myCursor.execute ("SELECT DISTINCT User_Username FROM User")
+            myCursor.execute ("SELECT DISTINCT User_Username FROM User ORDER BY User_Username ASC")
             usersResult = myCursor.fetchall()
             for row in usersResult:
                 self.usersCombo.insertItem (1, row[0])
@@ -80,7 +80,7 @@ class Create (qt.QWidget):
             for row in result:
                 userID = row[0]
             try:
-                myCursor.execute ("INSERT INTO Tasks (User_ID, Task_DateAdded, Task_DateDue, Task_Subject) VALUES (%s,%s,%s,%s)", [userID, dateAddedValue, dateDueValue, self.subjectEdit.toPlainText()])
+                myCursor.execute ("INSERT INTO Tasks (User_ID, Task_DateAdded, Task_DateDue, Task_Subject) VALUES (%s,%s,%s,%s)", [userID, dateAddedValue, dateDueValue.toPyDate(), self.subjectEdit.toPlainText()])
                 alertPopup = qt.QMessageBox()
                 alertPopup.setText("Successfully inserted!")
                 alertPopup.setIcon(alertPopup.Information)
