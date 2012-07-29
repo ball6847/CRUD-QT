@@ -47,8 +47,6 @@ class Retrieve (qt.QWidget):
             print "Error %d: %s" % (e.args[0], e.args[1])
             sys.exit(1) 
 
-#        self.spacer = qt.QSpacerItem(100, 50, qt.QSizePolicy.Expanding, qt.QSizePolicy.Fixed)
-                
         grid = qt.QGridLayout()
         grid.setSpacing(10)
                 
@@ -104,7 +102,7 @@ class Retrieve (qt.QWidget):
             try:
                 myCursor.execute ("SELECT User_Fname FROM User WHERE User_Username = %s", [self.searchByUsernameEdit.text()])
                 searchResult = myCursor.fetchall()
-                if searchResult == None:
+                if searchResult == -1:
                     alertPopup = qt.QMessageBox()
                     alertPopup.setText("Nothing about " + self.searchByUsernameEdit.text() + " was found in this table")
                     alertPopup.setIcon(alertPopup.Critical)
