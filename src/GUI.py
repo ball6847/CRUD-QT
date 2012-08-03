@@ -8,6 +8,8 @@ import sys
 import CreateUserWidget
 import CreateTaskWidget
 import RetrieveWidget
+import UpdateDeleteWidget
+
 from PyQt4 import QtGui as qt
 
 def main():
@@ -19,13 +21,16 @@ def main():
     CreateUserTab = CreateUserWidget.Create()
     CreateTaskTab = CreateTaskWidget.Create()
     RetrieveTab = RetrieveWidget.Retrieve()
+    UpdateDeleteTab = UpdateDeleteWidget.UpdateDelete()
     
     tabs = qt.QTabWidget()
+    
     tabs.addTab (CreateUserTab, "Create User")
     tabs.addTab (CreateTaskTab, "Create Task")
     tabs.addTab (RetrieveTab, "Search")
+    tabs.addTab (UpdateDeleteTab, "Update/Delete")
     
-    tabs.setGeometry(450, 100, 350, 520)
+    tabs.setGeometry(450, 100, 400, 520)
     tabs.setWindowTitle('CRUD')
     tabs.show()
     
