@@ -6,6 +6,7 @@ Created on Jul 18, 2012
 
 import MySQLdb
 import sys
+from settings import connection
 
 class Connection ():
     '''
@@ -13,8 +14,8 @@ class Connection ():
     '''
     def __init__(self):
         try:
-            self.conn = MySQLdb.connect(host="localhost", user="root",
-                                 passwd="ONGOINGwarfare1+2+3+", db="CRUDQT")
+            self.conn = MySQLdb.connect(host=connection['host'], user=connection['user'],
+                                 passwd=connection['password'], db=connection['database'])
         except MySQLdb.Error, e:
             print "Error %d: %s" % (e.args[0], e.args[1])
             sys.exit(1)
