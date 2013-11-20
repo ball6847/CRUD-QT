@@ -5,12 +5,10 @@ Created on Jul 18, 2012
 '''
 
 import sys
-import CreateUserWidget
-import CreateTaskWidget
-import RetrieveWidget
-import UpdateDeleteWidget
-
 from PyQt4 import QtGui as qt
+
+from widget import CreateUserWidget, CreateTaskWidget, RetrieveWidget, UpdateDeleteWidget
+
 
 def main():
     '''
