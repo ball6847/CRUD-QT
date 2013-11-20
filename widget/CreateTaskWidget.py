@@ -80,6 +80,7 @@ class Create (qt.QWidget):
             for row in result:
                 userID = row[0]
             try:
+                print dateDueValue.toPyDate()
                 myCursor.execute ("INSERT INTO Tasks (User_ID, Task_DateAdded, Task_DateDue, Task_Subject) VALUES (%s,%s,%s,%s)", [userID, dateAddedValue, dateDueValue.toPyDate(), self.subjectEdit.toPlainText()])
                 alertPopup = qt.QMessageBox()
                 alertPopup.setText("Successfully inserted!")
